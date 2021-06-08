@@ -18,8 +18,9 @@ def store_view(request, category_slug=None):
     paginator = Paginator(products, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    product_count = products.count()
 
-    return render(request, 'store/store.html', {'products': page_obj})
+    return render(request, 'store/store.html', {'products': page_obj, 'product_count': product_count})
 
 
 def product_detail_view(request, category_slug=None, product_slug=None):
