@@ -28,7 +28,8 @@
                                                 <div class="aside"><img src="{{ cart_item.product.image.url }}" class="img-sm">
                                                 </div>
                                                 <figcaption class="info">
-                                                    <a href="#" class="title text-dark">{{ cart_item.product.name }}</a>
+                                                    <a href="{{ cart_item.product.get_absolute_url }}"
+                                                        class="title text-dark">{{ cart_item.product.name }}</a>
                                                     <p class="text-muted small">Cloar: 25 Mpx <br>Size: Canon</p>
                                                 </figcaption>
                                             </figure>

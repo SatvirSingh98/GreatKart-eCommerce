@@ -75,10 +75,15 @@
 
                         {% if product.stock > 0 %}
                             <hr>
-                            <a href="{% url 'cart:add_to_cart' product.id %}" class="btn  btn-primary">
-                                <span class="text">Add to cart</span>
-                                <i class="fas fa-shopping-cart"></i>
-                            </a>
+                            {% if in_cart %}
+                                <a class="btn btn-success">
+                                    <span class="text">Added to cart</span>
+                                    <i class="fas fa-check"></i>
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <span class="text">Add to cart</span>
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
                         {% endif %}
 
                     </article> <!-- product-info-aside .// -->
