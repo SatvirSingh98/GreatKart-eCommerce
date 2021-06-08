@@ -148,7 +148,15 @@
                                             <del class="price-old">₹1980</del>
                                         </div> <!-- price-wrap.// -->
                                     </div>
-                                    <a href="#" class="btn btn-block btn-primary">Add to cart </a>
+
+                                    {% if product.stock == 0 %}
+                                        <button class="btn btn-outline-danger btn-block" disabled>
+                                            <span class="text">Out of stock</span>
+                                        </button>
+                                    {% else %}
+                                        <a href="#" class="btn btn-block btn-primary">Add to cart </a>
+                                    {% endif %}
+
                                 </figcaption>
                             </figure>
                         </div> <!-- col.// -->
