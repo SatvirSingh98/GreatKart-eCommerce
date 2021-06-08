@@ -64,4 +64,4 @@ class Variation(models.Model):
     objects = VariationManager()
 
     def __str__(self):
-        return self.product.name
+        return f'{self.product.name} - ({self.variation_category}: {self.variation_value})'
