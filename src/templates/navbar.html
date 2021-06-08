@@ -41,9 +41,7 @@
                         <div class="dropdown-menu">
 
                             {% for category in links %}
-                                <a class="dropdown-item" href="{{ category.get_absolute_url }}">
-                                    {{ category.name }}
-                                </a>
+                                <a class="dropdown-item" href="{{ category.get_absolute_url }}">{{ category.name }}</a>
                             {% endfor %}
 
                         </div>
@@ -73,9 +71,8 @@
                             </div>
                         </div>
                         <a href="{% url 'cart:cart' %}" class="widget-header pl-3 ml-3">
-                            <div class="icon icon-sm rounded-circle border"><i class="fa fa-shopping-cart"></i>
-                            </div>
-                            <span class="badge badge-pill badge-danger notify">0</span>
+                            <div class="icon icon-sm rounded-circle border"><i class="fa fa-shopping-cart"></i></div>
+                            <span class="badge badge-pill badge-danger notify">{{ cart_count }}</span>
                         </a>
                     </div> <!-- widgets-wrap.// -->
                 </div> <!-- col.// -->
