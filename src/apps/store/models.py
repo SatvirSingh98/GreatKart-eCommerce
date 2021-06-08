@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from django.urls import reverse
 
 from apps.category.models import Category
 from core.utils import unique_slug_generator
@@ -27,6 +28,10 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('store:product-detail',
+                       kwargs={'product_slug': self.slug, 'category_slug': self.category.slug})
 
 
 @receiver(pre_save, sender=Product)

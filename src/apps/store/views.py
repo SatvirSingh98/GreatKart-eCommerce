@@ -12,3 +12,8 @@ def store_view(request, category_slug=None):
     else:
         products = Product.objects.all()
     return render(request, 'store/store.html', {'products': products})
+
+
+def product_detail_view(request, category_slug=None, product_slug=None):
+    product = get_object_or_404(Product, category__slug=category_slug, slug=product_slug)
+    return render(request, 'store/product-detail.html', {'product': product})
