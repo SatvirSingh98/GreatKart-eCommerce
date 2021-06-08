@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
-{% load static compress %}
+{% url 'store:search' as search_url %}
 
 {% block content %}
 <!-- ========================= SECTION PAGETOP ========================= -->
 <section class="section-pagetop bg">
     <div class="container">
-        <h2 class="title-page">Our Store</h2>
-
+        <h2 class="title-page">
+            {% if 'search' in request.path %}Search Results{% else %}Our Store{% endif %}
+        </h2>
     </div> <!-- container //  -->
 </section>
 <!-- ========================= SECTION INTRO END// ========================= -->
@@ -159,6 +160,8 @@
                                 </figcaption>
                             </figure>
                         </div> <!-- col.// -->
+                    {% empty %}
+                        <h1 class="text-info mx-auto">No Products!!!</h1>
                     {% endfor %}
                 </div> <!-- row end.// -->
 

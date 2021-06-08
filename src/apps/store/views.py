@@ -1,4 +1,5 @@
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 
 from apps.cart.models import CartItem
@@ -28,3 +29,18 @@ def product_detail_view(request, category_slug=None, product_slug=None):
     in_cart = CartItem.objects.filter(cart__cart_id=_cart_id(request), product=product).exists()
     print(in_cart)
     return render(request, 'store/product-detail.html', {'product': product, 'in_cart': in_cart})
+
+
+def search_view(request):
+    query = request.GET.get('q')
+    if query is not None:
+        lookups = Q(name__icontains=query) | Q(slug__icontains=query)
+        products = Product.objects.filter(lookups).distinct().order_by('-created_at')
+        product_count = products.count()
+    else:
+        products = Product.objects.none()
+        product_count = 0
+    context = {'products': products,
+               'product_count': product_count,
+               'query': query}
+    return render(request, 'store/store.html', context)
