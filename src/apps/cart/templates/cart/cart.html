@@ -57,7 +57,9 @@
                                             <var class="price">₹{{ cart_item.subtotal }}</var>
 
                                             {% if cart_item.quantity > 1 %}
-                                                <small class="text-muted">₹{{ cart_item.product.price }}</small>
+                                                <small class="text-muted">
+                                                    ₹{{ cart_item.product.price }} each
+                                                </small>
                                             {% endif %}
 
                                         </div> <!-- price-wrap .// -->
@@ -83,11 +85,11 @@
                         </dl>
                         <dl class="dlist-align">
                             <dt>Tax:</dt>
-                            <dd class="text-right"> $10.00</dd>
+                            <dd class="text-right">₹{{ tax }}</dd>
                         </dl>
                         <dl class="dlist-align">
                             <dt>Total:</dt>
-                            <dd class="text-right text-dark b"><strong>$59.97</strong></dd>
+                            <dd class="text-right text-dark b"><strong>₹{{ grand_total }}</strong></dd>
                         </dl>
                         <hr>
                         <p class="text-center mb-3">
