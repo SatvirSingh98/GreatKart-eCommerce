@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'apps.category',
+    'apps.accounts',
 
     'compressor',
 ]
