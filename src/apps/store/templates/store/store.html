@@ -33,11 +33,7 @@
                                     <li><a href="{% url 'store:store-home' %}">All</a></li>
 
                                     {% for category in links %}
-                                        <li>
-                                            <a href="{{ category.get_absolute_url }}">
-                                                {{ category.name }}
-                                            </a>
-                                        </li>
+                                    <li><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>
                                     {% endfor %}
 
                                 </ul>
@@ -154,7 +150,7 @@
                                             <span class="text">Out of stock</span>
                                         </button>
                                     {% else %}
-                                        <a href="#" class="btn btn-block btn-primary">Add to cart </a>
+                                        <a href="{% url 'cart:add_to_cart' product.id %}" class="btn btn-block btn-primary">Add to cart </a>
                                     {% endif %}
 
                                 </figcaption>
