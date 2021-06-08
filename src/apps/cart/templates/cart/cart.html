@@ -38,7 +38,8 @@
                                         <div class="col">
                                             <div class="input-group input-spinner">
                                                 <div class="input-group-prepend">
-                                                    <a href="#" class="btn btn-light" type="button" id="button-plus">
+                                                    <a href="{% url 'cart:decrement_cart_item' cart_item.product_id %}"
+                                                        class="btn btn-light" type="button" id="button-plus">
                                                         <i class="fa fa-minus"></i>
                                                     </a>
                                                 </div>
@@ -57,15 +58,14 @@
                                             <var class="price">₹{{ cart_item.subtotal }}</var>
 
                                             {% if cart_item.quantity > 1 %}
-                                                <small class="text-muted">
-                                                    ₹{{ cart_item.product.price }} each
-                                                </small>
+                                                <small class="text-muted">₹{{ cart_item.product.price }} each</small>
                                             {% endif %}
 
                                         </div> <!-- price-wrap .// -->
                                     </td>
                                     <td class="text-right">
-                                        <a href="" class="btn btn-danger">Remove</a>
+                                        <a href="{% url 'cart:remove_from_cart' cart_item.product_id %}"
+                                            class="btn btn-danger">Remove</a>
                                     </td>
                                 </tr>
                             {% endfor %}
