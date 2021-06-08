@@ -6,6 +6,11 @@ from apps.category.models import Category
 from core.utils import unique_slug_generator
 
 
+class ProductManager(models.Manager):
+    def all(self):
+        return super().filter(is_available=True)
+
+
 class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, unique=True)
@@ -17,6 +22,8 @@ class Product(models.Model):
     is_available = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+
+    objects = ProductManager()
 
     def __str__(self):
         return self.name

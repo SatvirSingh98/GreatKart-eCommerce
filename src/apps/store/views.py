@@ -1,5 +1,8 @@
 from django.shortcuts import render
 
+from .models import Product
+
 
 def store_view(request):
-    return render(request, 'store/store.html')
+    products = Product.objects.all()
+    return render(request, 'store/store.html', {'products': products})
