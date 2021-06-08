@@ -1,12 +1,13 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 
 from .views import index
 
 urlpatterns = [
     path('', index, name='index'),
+    path('store/', include('apps.store.urls')),
     path('admin/', admin.site.urls),
 ]
 
