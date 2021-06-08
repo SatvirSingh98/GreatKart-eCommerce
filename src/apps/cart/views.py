@@ -1,3 +1,4 @@
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -29,9 +30,10 @@ def _cart_id(request):
 
 
 def add_to_cart(request, product_id):
-    color = request.GET.get('color')
-    size = request.GET.get('size')
-    print(color, size)
+    if request.method == 'POST':
+        color = request.POST.get('color')
+        size = request.POST.get('size')
+        print(color, size)
 
     product = Product.objects.get(id=product_id)  # to get the product
     try:

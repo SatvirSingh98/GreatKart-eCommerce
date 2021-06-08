@@ -35,17 +35,20 @@
 
                         <hr>
 
-                        <form action="{% url 'cart:add_to_cart' product.id %}">
+                        <form action="{% url 'cart:add_to_cart' product.id %}" method="POST">
+                            {% csrf_token %}
                             <div class="row">
                                 <div class="item-option-select">
                                     <h6>Choose Color</h6>
                                     <select class="form-control form-control" name="color" required>
                                         <option value='' selected disabled>Choose Color</option>
-                                        {% for i in product.variation_set.all %}
-                                            <option value='{{ i.variation_value }}'>
-                                                {{ i.variation_value }}
+
+                                        {% for i in product.variation_set.colors %}
+                                            <option value='{{ i.variation_value|lower }}'>
+                                                {{ i.variation_value|title }}
                                             </option>
                                         {% endfor %}
+
                                     </select>
                                 </div>
 
@@ -53,10 +56,13 @@
                                     <h6>Select Size</h6>
                                     <select class="form-control form-control" name="size" required>
                                         <option value='' selected disabled>Choose Size</option>
-                                        <option value='small'>Small</option>
-                                        <option value='medium'>Medium</option>
-                                        <option value='large'>Large</option>
-                                        <option value='extra large'>Extra Large</option>
+
+                                        {% for i in product.variation_set.sizes %}
+                                            <option value='{{ i.variation_value|lower }}'>
+                                                {{ i.variation_value|title }}
+                                            </option>
+                                        {% endfor %}
+
                                     </select>
                                 </div>
                             </div> <!-- row.// -->
