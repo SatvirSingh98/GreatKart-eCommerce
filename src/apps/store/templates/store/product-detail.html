@@ -39,16 +39,20 @@
                             <div class="row">
                                 <div class="item-option-select">
                                     <h6>Choose Color</h6>
-                                    <select class="form-control form-control" name="color">
-                                        <option value='blue'>Blue</option>
-                                        <option value='green'>Green</option>
-                                        <option value='navy'>Navy</option>
+                                    <select class="form-control form-control" name="color" required>
+                                        <option value='' selected disabled>Choose Color</option>
+                                        {% for i in product.variation_set.all %}
+                                            <option value='{{ i.variation_value }}'>
+                                                {{ i.variation_value }}
+                                            </option>
+                                        {% endfor %}
                                     </select>
                                 </div>
 
                                 <div class="item-option-select">
                                     <h6>Select Size</h6>
-                                    <select class="form-control form-control" name="size">
+                                    <select class="form-control form-control" name="size" required>
+                                        <option value='' selected disabled>Choose Size</option>
                                         <option value='small'>Small</option>
                                         <option value='medium'>Medium</option>
                                         <option value='large'>Large</option>
