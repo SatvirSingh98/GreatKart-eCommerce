@@ -27,7 +27,6 @@ def store_view(request, category_slug=None):
 def product_detail_view(request, category_slug=None, product_slug=None):
     product = get_object_or_404(Product, category__slug=category_slug, slug=product_slug)
     in_cart = CartItem.objects.filter(cart__cart_id=_cart_id(request), product=product).exists()
-    print(in_cart)
     return render(request, 'store/product-detail.html', {'product': product, 'in_cart': in_cart})
 
 

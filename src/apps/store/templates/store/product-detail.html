@@ -34,65 +34,50 @@
                         <p>{{ product.description }}</p>
 
                         <hr>
-                        <div class="row">
-                            <div class="item-option-select">
-                                <h6>Choose Color</h6>
-                                <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
-                                    <label class="btn btn-light">
-                                        <input type="radio" name="radio_color"> Silver
-                                    </label>
-                                    <label class="btn btn-light">
-                                        <input type="radio" name="radio_color"> Gray
-                                    </label>
-                                    <label class="btn btn-light active">
-                                        <input type="radio" name="radio_color checked"> Gold
-                                    </label>
-                                    <label class="btn btn-light">
-                                        <input type="radio" name="radio_color"> Black
-                                    </label>
-                                </div>
-                            </div>
-                        </div> <!-- row.// -->
-                        <div class="row">
-                            <div class="item-option-select">
-                                <h6>Select Size</h6>
-                                <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
-                                    <label class="btn btn-light">
-                                        <input type="radio" name="radio_color"> S
-                                    </label>
-                                    <label class="btn btn-light active">
-                                        <input type="radio" name="radio_color" checked> M
-                                    </label>
-                                    <label class="btn btn-light">
-                                        <input type="radio" name="radio_color"> L
-                                    </label>
-                                    <label class="btn btn-light">
-                                        <input type="radio" name="radio_color"> XL
-                                    </label>
-                                </div>
-                            </div>
-                        </div> <!-- row.// -->
 
-                        {% if product.stock > 0 %}
-                            <hr>
-                            {% if in_cart %}
-                                <a class="btn btn-success">
-                                    <span class="text">Added to cart</span>
-                                    <i class="fas fa-check"></i>
-                                </a>
-                                <a href="{% url 'cart:cart' %}" class="btn btn-outline-primary">
-                                    <span class="text">View Cart</span>
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                            {% else %}
-                                <a href="{% url 'cart:add_to_cart' product.id %}" class="btn btn-primary">
-                                    <span class="text">Add to cart</span>
-                                    <i class="fas fa-shopping-cart"></i>
-                                </a>
+                        <form action="{% url 'cart:add_to_cart' product.id %}">
+                            <div class="row">
+                                <div class="item-option-select">
+                                    <h6>Choose Color</h6>
+                                    <select class="form-control form-control" name="color">
+                                        <option value='blue'>Blue</option>
+                                        <option value='green'>Green</option>
+                                        <option value='navy'>Navy</option>
+                                    </select>
+                                </div>
+
+                                <div class="item-option-select">
+                                    <h6>Select Size</h6>
+                                    <select class="form-control form-control" name="size">
+                                        <option value='small'>Small</option>
+                                        <option value='medium'>Medium</option>
+                                        <option value='large'>Large</option>
+                                        <option value='extra large'>Extra Large</option>
+                                    </select>
+                                </div>
+                            </div> <!-- row.// -->
+
+                            {% if product.stock > 0 %}
+                                <hr>
+                                {% if in_cart %}
+                                    <a class="btn btn-success">
+                                        <span class="text">Added to cart</span>
+                                        <i class="fas fa-check"></i>
+                                    </a>
+                                    <a href="{% url 'cart:cart' %}" class="btn btn-outline-primary">
+                                        <span class="text">View Cart</span>
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                {% else %}
+                                    <button type="submit" class="btn btn-primary">
+                                        <span class="text">Add to cart</span>
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </button>
+                                {% endif %}
                             {% endif %}
-                        {% endif %}
-
+                        </form>
                     </article> <!-- product-info-aside .// -->
+
                 </main> <!-- col.// -->
             </div> <!-- row.// -->
         </div> <!-- card.// -->

@@ -29,6 +29,10 @@ def _cart_id(request):
 
 
 def add_to_cart(request, product_id):
+    color = request.GET.get('color')
+    size = request.GET.get('size')
+    print(color, size)
+
     product = Product.objects.get(id=product_id)  # to get the product
     try:
         cart = Cart.objects.get(cart_id=_cart_id(request))  # get cart using cart_id present in session
