@@ -22,6 +22,7 @@ INSTALLED_APPS = [
 
     'apps.category',
     'apps.accounts',
+    'apps.store',
 
     'compressor',
 ]
