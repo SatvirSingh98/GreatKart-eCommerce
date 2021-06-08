@@ -38,3 +38,20 @@ class Product(models.Model):
 def pre_save_slug_generator(instance, sender, *args, **kwargs):
     if not instance.slug:
         instance.slug = unique_slug_generator(instance)
+
+
+VARIATION_CHOICES = (
+    ('color', 'Color'),
+    ('size', 'Size')
+)
+
+
+class Variation(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    variation_category = models.CharField(max_length=50, choices=VARIATION_CHOICES)
+    variation_value = models.CharField(max_length=100)
+    timestamp = models.DateTimeField(auto_now=False)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.product.name

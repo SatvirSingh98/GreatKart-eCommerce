@@ -1,3 +1,20 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Product, Variation
+
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    '''Admin View for Product'''
+
+    list_display = ('__str__', 'price', 'stock', 'is_available')
+    list_filter = ('category', 'is_available')
+
+
+@admin.register(Variation)
+class VariationAdmin(admin.ModelAdmin):
+    '''Admin View for Variation'''
+
+    list_display = ('__str__', 'variation_category', 'variation_value', 'timestamp', 'is_active')
+    list_editable = ('is_active',)
+    list_filter = ('product', 'variation_category', 'variation_value')
