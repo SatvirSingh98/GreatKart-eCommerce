@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
 
 from apps.cart.models import CartItem
@@ -13,10 +14,16 @@ def store_view(request, category_slug=None):
         products = Product.objects.all().filter(category=category)
     else:
         products = Product.objects.all()
-    return render(request, 'store/store.html', {'products': products})
+
+    paginator = Paginator(products, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'store/store.html', {'products': page_obj})
 
 
 def product_detail_view(request, category_slug=None, product_slug=None):
     product = get_object_or_404(Product, category__slug=category_slug, slug=product_slug)
     in_cart = CartItem.objects.filter(cart__cart_id=_cart_id(request), product=product).exists()
+    print(in_cart)
     return render(request, 'store/product-detail.html', {'product': product, 'in_cart': in_cart})
