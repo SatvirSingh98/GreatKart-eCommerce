@@ -1,11 +1,24 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render
 
 from apps.cart.models import Cart, CartItem
 from apps.store.models import Product
 
 
-def cart(request):
-    return render(request, 'cart/cart.html')
+def cart(request, total=0, quantity=0, cart_items=None):
+    tax, grand_total = 0, 0
+    try:
+        cart = Cart.objects.get(cart_id=_cart_id(request))
+        cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+        for cart_item in cart_items:
+            total += cart_item.product.price * cart_item.quantity
+            quantity += cart_item.quantity
+    except ObjectDoesNotExist:
+        pass
+    tax = (18 * total)/100
+    grand_total = total + tax
+    context = {'total': total, 'quantity': quantity, 'cart_items': cart_items, 'tax': tax, 'grand_total': grand_total}
+    return render(request, 'cart/cart.html', context)
 
 
 def _cart_id(request):
