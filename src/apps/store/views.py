@@ -11,9 +11,9 @@ from .models import Product
 def store_view(request, category_slug=None):
     if category_slug is not None:
         category = get_object_or_404(Category, slug=category_slug)
-        products = Product.objects.all().filter(category=category)
+        products = Product.objects.all().filter(category=category).order_by('id')
     else:
-        products = Product.objects.all()
+        products = Product.objects.all().order_by('id')
 
     paginator = Paginator(products, 6)
     page_number = request.GET.get('page')
