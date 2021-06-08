@@ -35,7 +35,9 @@
 
                         <hr>
 
-                        <form action="{% url 'cart:add_to_cart' product.id %}" method="POST">
+                        <form
+                            action="{% if not in_cart %}{% url 'cart:add_to_cart' product.id %}{% else %}{% url 'cart:edit_cart_item' product.id %}{% endif %}"
+                            method="POST">
                             {% csrf_token %}
                             <div class="row">
                                 <div class="item-option-select">
@@ -74,10 +76,10 @@
                                         <span class="text">Added to cart</span>
                                         <i class="fas fa-check"></i>
                                     </a>
-                                    <a href="{% url 'cart:cart' %}" class="btn btn-outline-primary">
-                                        <span class="text">View Cart</span>
+                                    <button href="" class="btn btn-outline-primary">
+                                        <span class="text">Edit</span>
                                         <i class="fas fa-eye"></i>
-                                    </a>
+                                    </button>
                                 {% else %}
                                     <button type="submit" class="btn btn-primary">
                                         <span class="text">Add to cart</span>
