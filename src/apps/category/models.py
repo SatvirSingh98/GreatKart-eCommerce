@@ -1,4 +1,8 @@
 from django.db import models
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+
+from core.utils import unique_slug_generator
 
 
 class Category(models.Model):
@@ -12,3 +16,9 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+
+@receiver(pre_save, sender=Category)
+def pre_save_slug_generator(instance, sender, *args, **kwargs):
+    if not instance.slug:
+        instance.slug = unique_slug_generator(instance)
