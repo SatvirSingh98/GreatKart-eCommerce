@@ -50,12 +50,35 @@ def add_to_cart(request, product_id):
         cart = Cart.objects.create(cart_id=_cart_id(request))
     cart.save()
 
-    try:
-        cart_item = CartItem.objects.get(product=product, cart=cart)
-        cart_item.quantity += 1
-        cart_item.save()
-    except CartItem.DoesNotExist:
+    cart_item_exists = CartItem.objects.filter(product=product, cart=cart).exists()
+
+    if cart_item_exists:
+        cart_item = CartItem.objects.filter(product=product, cart=cart)
+
+        existing_variation_list = []
+        ids = []
+        for item in cart_item:
+            variations = item.variations.all()
+            existing_variation_list.append(list(variations))
+            ids.append(item.id)
+
+        if product_variation in existing_variation_list:
+            index = existing_variation_list.index(product_variation)
+            item_id = ids[index]
+            item = CartItem.objects.get(product=product, id=item_id)
+            item.quantity += 1
+            item.save()
+        else:
+            item = CartItem.objects.create(product=product, cart=cart, quantity=1)
+            if len(product_variation) > 0:
+                item.variations.clear()
+                item.variations.add(*product_variation)
+            item.save()
+    else:
         cart_item = CartItem.objects.create(product=product, cart=cart, quantity=1)
+        if len(product_variation) > 0:
+            cart_item.variations.clear()
+            cart_item.variations.add(*product_variation)
         cart_item.save()
     return redirect('cart:cart')
 
@@ -76,27 +99,4 @@ def remove_from_cart(request, product_id):
     cart = Cart.objects.get(cart_id=_cart_id(request))
     product = get_object_or_404(Product, id=product_id)
     CartItem.objects.get(product=product, cart=cart).delete()
-    return redirect('cart:cart')
-
-
-def edit_cart_item_view(request, product_id):
-    cart = Cart.objects.get(cart_id=_cart_id(request))
-    cart_item = CartItem.objects.get(product__id=product_id, cart=cart)
-    product_variation = []
-    if request.method == 'POST':
-        for item in request.POST:
-            key = item
-            value = request.POST.get(item)
-
-            try:
-                variation = Variation.objects.get(product__id=product_id, variation_category__iexact=key,
-                                                  variation_value__iexact=value)
-                product_variation.append(variation)
-            except Exception:
-                pass
-
-        cart_item.variations.clear()
-        for item in product_variation:
-            cart_item.variations.add(item)
-
     return redirect('cart:cart')

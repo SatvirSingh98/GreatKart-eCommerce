@@ -35,9 +35,7 @@
 
                         <hr>
 
-                        <form
-                            action="{% if not in_cart %}{% url 'cart:add_to_cart' product.id %}{% else %}{% url 'cart:edit_cart_item' product.id %}{% endif %}"
-                            method="POST">
+                        <form action="{% url 'cart:add_to_cart' product.id %}" method="POST">
                             {% csrf_token %}
                             <div class="row">
                                 <div class="item-option-select">
@@ -71,21 +69,10 @@
 
                             {% if product.stock > 0 %}
                                 <hr>
-                                {% if in_cart %}
-                                    <a class="btn btn-success">
-                                        <span class="text">Added to cart</span>
-                                        <i class="fas fa-check"></i>
-                                    </a>
-                                    <button href="" class="btn btn-outline-primary">
-                                        <span class="text">Edit</span>
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                {% else %}
-                                    <button type="submit" class="btn btn-primary">
-                                        <span class="text">Add to cart</span>
-                                        <i class="fas fa-shopping-cart"></i>
-                                    </button>
-                                {% endif %}
+                                <button type="submit" class="btn btn-primary">
+                                    <span class="text">Add to cart</span>
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
                             {% endif %}
                         </form>
                     </article> <!-- product-info-aside .// -->
