@@ -7,7 +7,7 @@ from django.core.mail import EmailMessage
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from .forms import RegistrationForm
 
@@ -40,8 +40,7 @@ def register_view(request):
         to_email = email
         send_email = EmailMessage(mail_subject, message, to=[to_email])
         send_email.send()
-        messages.success(request, 'Registration Successfull')
-        return redirect('accounts:login')
+        return redirect(f'/accounts/login/?activation=verification&email={email}')
 
     return render(request, 'accounts/register.html', {'form': form})
 
@@ -67,3 +66,19 @@ def logout_view(request):
     logout(request)
     messages.info(request, 'You are successfully logged out!!!')
     return redirect('/')
+
+
+def activate_email_view(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User._default_manager.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, 'Congractulations! Your account is activated.')
+        return redirect('accounts:login')
+    else:
+        messages.error(request, 'Invalid activation link.')
+        return redirect('accounts:register')
