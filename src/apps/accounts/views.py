@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib import messages
 from django.shortcuts import redirect, render
 
 from .forms import RegistrationForm
@@ -20,7 +21,7 @@ def register_view(request):
                                         username=username, email=email, password=password)
         user.phone_number = phone_number
         user.save()
-        form = RegistrationForm()
+        messages.success(request, 'Registration Successfull')
         return redirect('accounts:login')
 
     return render(request, 'accounts/register.html', {'form': form})
