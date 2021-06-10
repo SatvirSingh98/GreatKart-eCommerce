@@ -1,6 +1,9 @@
 from django import forms
+from django.contrib.auth import get_user_model
 
 from .models import Account
+
+User = get_user_model()
 
 
 class RegistrationForm(forms.ModelForm):
@@ -16,6 +19,7 @@ class RegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={
         'placeholder': 'Enter Password',
     }))
+
     confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={
         'placeholder': 'Confirm Password',
     }))
@@ -23,3 +27,24 @@ class RegistrationForm(forms.ModelForm):
     class Meta:
         model = Account
         fields = ['first_name', 'last_name', 'email', 'phone_number', 'password']
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        qs_exists = User.objects.filter(email=email).exists()
+        if qs_exists:
+            raise forms.ValidationError('Account already exists.')
+        return email
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get('phone_number')
+        if len(phone_number) != 10 or not phone_number.isdigit():
+            raise forms.ValidationError('Please provide correct phone number!')
+        return phone_number
+
+    def clean(self):
+        cleaned_data = super(RegistrationForm, self).clean()
+        password = cleaned_data.get('password')
+        confirm_password = cleaned_data.get('confirm_password')
+        if password != confirm_password:
+            raise forms.ValidationError('Passwords does not match!')
+        return cleaned_data
