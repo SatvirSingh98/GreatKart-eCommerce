@@ -1,5 +1,6 @@
-from django.contrib.auth import get_user_model
 from django.contrib import messages
+from django.contrib.auth import authenticate, get_user_model, login, logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 from .forms import RegistrationForm
@@ -28,4 +29,23 @@ def register_view(request):
 
 
 def login_view(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        user = authenticate(email=email, password=password)
+        if user is not None:
+            login(request, user)
+            first_name = request.user.first_name.title()
+            last_name = request.user.last_name.title()
+            messages.success(request, f"Welcome {first_name} {last_name}")
+            return redirect('/')
+        else:
+            messages.error(request, 'Invalid Credentials!')
     return render(request, 'accounts/login.html')
+
+
+@login_required(login_url='accounts:login')
+def logout_view(request):
+    logout(request)
+    messages.info(request, 'You are successfully logged out!!!')
+    return redirect('/')
