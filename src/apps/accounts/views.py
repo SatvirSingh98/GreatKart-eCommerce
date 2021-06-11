@@ -7,7 +7,8 @@ from django.core.mail import EmailMessage
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.http import (is_safe_url, urlsafe_base64_decode,
+                               urlsafe_base64_encode)
 
 from .forms import RegistrationForm
 
@@ -47,6 +48,11 @@ def register_view(request):
 
 def login_view(request):
     if request.method == 'POST':
+        # for redirecting after login
+        next_ = request.GET.get('next')
+        next_post = request.POST.get('next')
+        redirect_path = next_ or next_post
+
         email = request.POST.get('email')
         password = request.POST.get('password')
         user = authenticate(email=email, password=password)
@@ -54,8 +60,13 @@ def login_view(request):
             login(request, user)
             first_name = request.user.first_name.title()
             last_name = request.user.last_name.title()
-            messages.success(request, f"Welcome {first_name} {last_name}")
-            return redirect('/')
+            if is_safe_url(redirect_path, request.get_host()):
+                messages.success(request, f"Welcome {first_name} {last_name}")
+                path = redirect_path.split('=')[1]
+                return redirect(path)
+            else:
+                messages.success(request, f"Welcome {first_name} {last_name}")
+                return redirect('/')
         else:
             messages.error(request, 'Invalid Credentials!')
     return render(request, 'accounts/login.html')
@@ -82,3 +93,8 @@ def activate_email_view(request, uidb64, token):
     else:
         messages.error(request, 'Invalid activation link.')
         return redirect('accounts:register')
+
+
+@login_required(login_url='accounts:login')
+def dashboard_view(request):
+    return render(request, 'accounts/dashboard.html')
