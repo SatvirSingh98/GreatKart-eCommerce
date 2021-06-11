@@ -10,6 +10,9 @@ from django.utils.encoding import force_bytes
 from django.utils.http import (is_safe_url, urlsafe_base64_decode,
                                urlsafe_base64_encode)
 
+from apps.cart.models import Cart, CartItem
+from apps.cart.views import _cart_id
+
 from .forms import RegistrationForm
 
 User = get_user_model()
@@ -57,6 +60,15 @@ def login_view(request):
         password = request.POST.get('password')
         user = authenticate(email=email, password=password)
         if user is not None:
+            try:
+                cart = Cart.objects.get(cart_id=_cart_id(request))
+                cart_item = CartItem.objects.filter(cart=cart)
+                if cart_item.exists():
+                    for item in cart_item:
+                        item.user = user
+                        item.save()
+            except Exception:
+                pass
             login(request, user)
             first_name = request.user.first_name.title()
             last_name = request.user.last_name.title()

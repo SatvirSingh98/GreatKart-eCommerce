@@ -1,4 +1,4 @@
-
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -103,6 +103,7 @@ def remove_from_cart(request, product_id, cart_item_id):
     return redirect('cart:cart')
 
 
+@login_required(login_url='accounts:login')
 def checkout(request, total=0, quantity=0, cart_items=None):
     tax, grand_total = 0, 0
     try:
