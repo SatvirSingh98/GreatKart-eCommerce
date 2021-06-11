@@ -18,7 +18,8 @@ def cart(request, total=0, quantity=0, cart_items=None):
         pass
     tax = (18 * total)/100
     grand_total = total + tax
-    context = {'total': total, 'quantity': quantity, 'cart_items': cart_items, 'tax': tax, 'grand_total': grand_total}
+    context = {'total': total, 'quantity': quantity, 'cart_items': cart_items,
+               'tax': tax, 'grand_total': grand_total}
     return render(request, 'cart/cart.html', context)
 
 
@@ -100,3 +101,20 @@ def remove_from_cart(request, product_id, cart_item_id):
     product = get_object_or_404(Product, id=product_id)
     CartItem.objects.get(product=product, cart=cart, id=cart_item_id).delete()
     return redirect('cart:cart')
+
+
+def checkout(request, total=0, quantity=0, cart_items=None):
+    tax, grand_total = 0, 0
+    try:
+        cart = Cart.objects.get(cart_id=_cart_id(request))
+        cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+        for cart_item in cart_items:
+            total += cart_item.product.price * cart_item.quantity
+            quantity += cart_item.quantity
+    except ObjectDoesNotExist:
+        pass
+    tax = (18 * total)/100
+    grand_total = total + tax
+    context = {'total': total, 'quantity': quantity, 'cart_items': cart_items,
+               'tax': tax, 'grand_total': grand_total}
+    return render(request, 'store/checkout.html', context)
