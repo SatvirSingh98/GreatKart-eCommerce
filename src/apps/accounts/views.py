@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
+from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
@@ -98,3 +99,30 @@ def activate_email_view(request, uidb64, token):
 @login_required(login_url='accounts:login')
 def dashboard_view(request):
     return render(request, 'accounts/dashboard.html')
+
+
+def forgot_password_view(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        if User.objects.filter(email=email).exists():
+            user = User.objects.get(email__iexact=email.lower())
+
+            current_site = get_current_site(request)
+            mail_subject = 'Reset your password.'
+            message = render_to_string('accounts/reset_password.html', {
+                'user': user,
+                'domain': current_site,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': default_token_generator.make_token(user),
+            })
+            to_email = email
+            send_email = EmailMessage(mail_subject, message, to=[to_email])
+            send_email.send()
+            messages.success(request, 'Password reset email has been sent to your email address.')
+        else:
+            messages.error(request, 'Account does not exist!')
+    return render(request, 'accounts/forgot_password.html')
+
+
+def reset_password_validate_view(request, uidb64, token):
+    return HttpResponse('Code Success...')
