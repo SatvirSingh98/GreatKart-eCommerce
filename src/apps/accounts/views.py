@@ -63,12 +63,39 @@ def login_view(request):
             try:
                 cart = Cart.objects.get(cart_id=_cart_id(request))
                 cart_item = CartItem.objects.filter(cart=cart)
+
                 if cart_item.exists():
+                    # Getting the product variations by cart_id
+                    product_variation = []
                     for item in cart_item:
-                        item.user = user
-                        item.save()
+                        variations = item.variations.all()
+                        product_variation.append(list(variations))
+
+                    # Getting the cart items from the user to access his product variations
+                    cart_item = CartItem.objects.filter(user=user)
+                    existing_variation_list = []
+                    ids = []
+                    for item in cart_item:
+                        variations = item.variations.all()
+                        existing_variation_list.append(list(variations))
+                        ids.append(item.id)
+
+                    for pr_var in product_variation:
+                        if pr_var in existing_variation_list:
+                            index = existing_variation_list.index(pr_var)
+                            item_id = ids[index]
+                            item = CartItem.objects.get(id=item_id)
+                            item.quantity += 1
+                            item.user = user
+                            item.save()
+                        else:
+                            cart_item = CartItem.objects.filter(cart=cart)
+                            for item in cart_item:
+                                item.user = user
+                                item.save()
             except Exception:
                 pass
+
             login(request, user)
             first_name = request.user.first_name.title()
             last_name = request.user.last_name.title()
