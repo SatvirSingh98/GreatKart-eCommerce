@@ -4,7 +4,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
-from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
@@ -61,9 +60,9 @@ def login_view(request):
             login(request, user)
             first_name = request.user.first_name.title()
             last_name = request.user.last_name.title()
-            if is_safe_url(redirect_path, request.get_host()):
-                messages.success(request, f"Welcome {first_name} {last_name}")
+            if is_safe_url(redirect_path, request.get_host()) and '?' in redirect_path:
                 path = redirect_path.split('=')[1]
+                messages.success(request, f"Welcome {first_name} {last_name}")
                 return redirect(path)
             else:
                 messages.success(request, f"Welcome {first_name} {last_name}")
@@ -109,7 +108,7 @@ def forgot_password_view(request):
 
             current_site = get_current_site(request)
             mail_subject = 'Reset your password.'
-            message = render_to_string('accounts/reset_password.html', {
+            message = render_to_string('accounts/verification_reset_password.html', {
                 'user': user,
                 'domain': current_site,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
@@ -118,11 +117,39 @@ def forgot_password_view(request):
             to_email = email
             send_email = EmailMessage(mail_subject, message, to=[to_email])
             send_email.send()
-            messages.success(request, 'Password reset email has been sent to your email address.')
+            # messages.success(request, 'Password reset email has been sent to your email address.')
+            return redirect(f'/accounts/reset-password/?activation=verification&email={email}')
         else:
             messages.error(request, 'Account does not exist!')
     return render(request, 'accounts/forgot_password.html')
 
 
 def reset_password_validate_view(request, uidb64, token):
-    return HttpResponse('Code Success...')
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User._default_manager.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and default_token_generator.check_token(user, token):
+        request.session['uid'] = uid
+        messages.success(request, 'Please reset your password.')
+        return redirect('accounts:reset-password')
+    else:
+        messages.error(request, 'Invalid activation link.')
+        return redirect('accounts:register')
+
+
+def reset_password_view(request):
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if password == confirm_password:
+            user = User.objects.get(id=request.session.get('uid'))
+            user.set_password(password)
+            user.save()
+            messages.success(request, 'Your password has been reset successfully.')
+            return redirect('accounts:login')
+        else:
+            messages.error(request, 'Passwords does not match!')
+    return render(request, 'accounts/reset_password.html')
