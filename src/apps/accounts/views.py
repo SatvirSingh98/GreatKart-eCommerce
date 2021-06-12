@@ -7,8 +7,8 @@ from django.core.mail import EmailMessage
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
-from django.utils.http import (is_safe_url, urlsafe_base64_decode,
-                               urlsafe_base64_encode)
+from django.utils.http import (url_has_allowed_host_and_scheme,
+                               urlsafe_base64_decode, urlsafe_base64_encode)
 
 from apps.cart.models import Cart, CartItem
 from apps.cart.views import _cart_id
@@ -99,7 +99,7 @@ def login_view(request):
             login(request, user)
             first_name = request.user.first_name.title()
             last_name = request.user.last_name.title()
-            if is_safe_url(redirect_path, request.get_host()) and '?' in redirect_path:
+            if url_has_allowed_host_and_scheme(redirect_path, request.get_host()) and '?' in redirect_path:
                 path = redirect_path.split('=')[1]
                 messages.success(request, f"Welcome {first_name} {last_name}")
                 return redirect(path)
