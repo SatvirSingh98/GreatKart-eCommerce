@@ -1,3 +1,4 @@
+import requests
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
@@ -7,8 +8,7 @@ from django.core.mail import EmailMessage
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
-from django.utils.http import (url_has_allowed_host_and_scheme,
-                               urlsafe_base64_decode, urlsafe_base64_encode)
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from apps.cart.models import Cart, CartItem
 from apps.cart.views import _cart_id
@@ -51,11 +51,6 @@ def register_view(request):
 
 def login_view(request):
     if request.method == 'POST':
-        # for redirecting after login
-        next_ = request.GET.get('next')
-        next_post = request.POST.get('next')
-        redirect_path = next_ or next_post
-
         email = request.POST.get('email')
         password = request.POST.get('password')
         user = authenticate(email=email, password=password)
@@ -99,11 +94,13 @@ def login_view(request):
             login(request, user)
             first_name = request.user.first_name.title()
             last_name = request.user.last_name.title()
-            if url_has_allowed_host_and_scheme(redirect_path, request.get_host()) and '?' in redirect_path:
-                path = redirect_path.split('=')[1]
+            try:
+                HTTP_REFERER = request.META.get('HTTP_REFERER')
+                path = requests.utils.urlparse(HTTP_REFERER).query
+                redirect_path = dict(x.split('=') for x in path.split('&'))
                 messages.success(request, f"Welcome {first_name} {last_name}")
-                return redirect(path)
-            else:
+                return redirect(redirect_path.get('next'))
+            except Exception:
                 messages.success(request, f"Welcome {first_name} {last_name}")
                 return redirect('/')
         else:
@@ -156,7 +153,6 @@ def forgot_password_view(request):
             to_email = email
             send_email = EmailMessage(mail_subject, message, to=[to_email])
             send_email.send()
-            # messages.success(request, 'Password reset email has been sent to your email address.')
             return redirect(f'/accounts/reset-password/?activation=verification&email={email}')
         else:
             messages.error(request, 'Account does not exist!')
