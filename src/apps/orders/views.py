@@ -7,7 +7,8 @@ from apps.orders.models import Order
 
 
 def place_order_view(request, total=0, quantity=0):
-    cart_items = CartItem.objects.filter(user=request.user)
+    current_user = request.user
+    cart_items = CartItem.objects.filter(user=current_user)
     cart_count = cart_items.count()
     if cart_count < 1:
         return redirect('store:store-home')
@@ -21,7 +22,7 @@ def place_order_view(request, total=0, quantity=0):
 
     if request.method == 'POST':
         data = Order()
-        data.user = request.user
+        data.user = current_user
         data.first_name = request.POST.get('first_name')
         data.last_name = request.POST.get('last_name')
         data.phone_no = request.POST.get('phone')
@@ -49,7 +50,17 @@ def place_order_view(request, total=0, quantity=0):
         data.order_no = order_number
         data.save()
 
-    return redirect('cart:checkout')
+        order = Order.objects.get(user=current_user, is_ordered=False, order_no=order_number)
+        context = {
+            'order': order,
+            'cart_items': cart_items,
+            'total': total,
+            'tax': tax,
+            'grand_total': grand_total,
+        }
+        return render(request, 'orders/payments.html', context)
+    else:
+        return redirect('cart:checkout')
 
 
 def payments_view(request):
