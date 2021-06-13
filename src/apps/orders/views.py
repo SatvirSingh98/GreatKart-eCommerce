@@ -1,6 +1,6 @@
 import datetime
 
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 
 from apps.cart.models import CartItem
 from apps.orders.models import Order
@@ -50,3 +50,7 @@ def place_order_view(request, total=0, quantity=0):
         data.save()
 
     return redirect('cart:checkout')
+
+
+def payments_view(request):
+    return render(request, 'orders/payments.html')
