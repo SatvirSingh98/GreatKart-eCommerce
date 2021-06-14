@@ -5,6 +5,7 @@ from django.shortcuts import redirect, render
 
 from apps.cart.models import CartItem
 from apps.orders.models import Order, OrderProduct, Payment
+from apps.store.models import Product
 
 
 def place_order_view(request, total=0, quantity=0):
@@ -99,5 +100,13 @@ def payments_view(request):
         order_product = OrderProduct.objects.get(id=order_product.id)
         order_product.variations.set(product_variation)
         order_product.save()
+
+        # Reduce the quantity of the sold products
+        product = Product.objects.get(id=item.product_id)
+        product.stock -= item.quantity
+        product.save()
+
+    # Clear cart
+    CartItem.objects.filter(user=request.user).delete()
 
     return render(request, 'orders/payments.html')
