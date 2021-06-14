@@ -4,7 +4,7 @@ import json
 from django.shortcuts import redirect, render
 
 from apps.cart.models import CartItem
-from apps.orders.models import Order, Payment
+from apps.orders.models import Order, OrderProduct, Payment
 
 
 def place_order_view(request, total=0, quantity=0):
@@ -77,5 +77,22 @@ def payments_view(request):
     payment.save()
     order.payment = payment
     order.is_ordered = True
+    order.status = 'Accepted'
     order.save()
+
+    # move the cart items to OrderProduct table
+    cart_items = CartItem.objects.filter(user=request.user)
+    for item in cart_items:
+        order_product = OrderProduct()
+        order_product.order_id = order.id
+        order_product.payment = payment
+        order_product.user_id = request.user.id
+        order_product.product_id = item.product_id
+        order_product.quantity = item.quantity
+        order_product.product_price = item.product.price
+        order_product.is_ordered = True
+        order_product.save()
+
+        # to store variations which is many-to-many field we first need to save the object.
+
     return render(request, 'orders/payments.html')
