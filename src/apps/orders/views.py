@@ -131,4 +131,27 @@ def payments_view(request):
 
 
 def order_complete_view(request):
-    return render(request, 'orders/order_complete.html')
+    order_number = request.GET.get('orderID')
+    transactionID = request.GET.get('paymentID')
+
+    try:
+        order = Order.objects.get(order_no=order_number, is_ordered=True)
+        ordered_products = OrderProduct.objects.filter(order_id=order.id)
+
+        subtotal = 0
+        for product in ordered_products:
+            subtotal += product.product_price * product.quantity
+
+        payment = Payment.objects.get(payment_id=transactionID)
+
+        context = {
+            'order': order,
+            'ordered_products': ordered_products,
+            'order_number': order.order_no,
+            'transactionID': payment.payment_id,
+            'payment': payment,
+            'subtotal': subtotal,
+        }
+        return render(request, 'orders/order_complete.html', context)
+    except (Payment.DoesNotExist, Order.DoesNotExist):
+        return redirect('/')
