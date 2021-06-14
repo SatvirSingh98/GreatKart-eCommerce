@@ -1,9 +1,10 @@
 import datetime
+import json
 
 from django.shortcuts import redirect, render
 
 from apps.cart.models import CartItem
-from apps.orders.models import Order
+from apps.orders.models import Order, Payment
 
 
 def place_order_view(request, total=0, quantity=0):
@@ -64,4 +65,17 @@ def place_order_view(request, total=0, quantity=0):
 
 
 def payments_view(request):
+    body = json.loads(request.body)
+    order = Order.objects.get(user=request.user, is_ordered=False, order_no=body.get('orderID'))
+    payment = Payment(
+        user=request.user,
+        payment_id=body.get('transactionID'),
+        payment_method=body.get('payment_method'),
+        status=body.get('status'),
+        amount_paid=order.order_total,
+    )
+    payment.save()
+    order.payment = payment
+    order.is_ordered = True
+    order.save()
     return render(request, 'orders/payments.html')
