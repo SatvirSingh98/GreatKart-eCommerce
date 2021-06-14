@@ -94,5 +94,10 @@ def payments_view(request):
         order_product.save()
 
         # to store variations which is many-to-many field we first need to save the object.
+        cart_item = CartItem.objects.get(id=item.id)
+        product_variation = cart_item.variations.all()
+        order_product = OrderProduct.objects.get(id=order_product.id)
+        order_product.variations.set(product_variation)
+        order_product.save()
 
     return render(request, 'orders/payments.html')

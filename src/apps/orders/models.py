@@ -63,7 +63,7 @@ class OrderProduct(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    variation = models.ManyToManyField(Variation, blank=True)
+    variations = models.ManyToManyField(Variation)
     quantity = models.PositiveIntegerField()
     product_price = models.DecimalField(max_digits=65, decimal_places=2)
     is_ordered = models.BooleanField(default=False)
