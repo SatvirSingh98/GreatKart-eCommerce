@@ -2,6 +2,7 @@ import datetime
 import json
 
 from django.core.mail import EmailMessage
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 
@@ -121,4 +122,13 @@ def payments_view(request):
     send_email = EmailMessage(mail_subject, message, to=[to_email])
     send_email.send()
 
-    return render(request, 'orders/payments.html')
+    # Send order number and transaction id back to sendData method via JsonResponse
+    data = {
+        'orderID': order.order_no,
+        'transactionID': payment.payment_id,
+    }
+    return JsonResponse(data)
+
+
+def order_complete_view(request):
+    return render(request, 'orders/order_complete.html')
