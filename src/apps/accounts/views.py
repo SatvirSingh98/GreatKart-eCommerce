@@ -133,7 +133,7 @@ def activate_email_view(request, uidb64, token):
     if user is not None and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        messages.success(request, 'Congractulations! Your account is activated.')
+        messages.success(request, 'Congratulations! Your account is activated.')
         return redirect('accounts:login')
     else:
         messages.error(request, 'Invalid activation link.')
@@ -273,3 +273,30 @@ def change_password_view(request):
             messages.error(request, 'Password does not match!')
             return redirect('accounts:change-password')
     return render(request, 'accounts/change_password.html')
+
+
+@login_required(login_url='accounts:login')
+def change_email_view(request):
+    if request.method == 'POST':
+        current_email = request.POST.get('current_email').lower()
+        new_email = request.POST.get('new_email').lower()
+        confirm_email = request.POST.get('confirm_email').lower()
+        username = new_email.split('@')[0]
+
+        user = User.objects.get(username__exact=request.user.username)
+
+        if new_email == confirm_email:
+            if user.email == current_email:
+                user.email = new_email
+                user.username = username
+                user.save()
+                logout(request)
+                messages.success(request, 'Email updated successfully.')
+                return redirect('accounts:dashboard')
+            else:
+                messages.error(request, 'This email is not registered with the current user.')
+                return redirect('accounts:change-email')
+        else:
+            messages.error(request, 'Email does not match!')
+            return redirect('accounts:change-email')
+    return render(request, 'accounts/change_email.html')

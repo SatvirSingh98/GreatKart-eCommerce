@@ -8,8 +8,9 @@
         <a class="list-group-item {% if '/edit_profile/' in request.path %}active{% endif %}"
             href="{% url 'accounts:edit-profile' %}"> Edit Profile </a>
         <a class="list-group-item {% if '/change_password/' in request.path %}active{% endif %}" 
-            href="{% url 'accounts:change-password' %}"> Change Password
-        </a>
+            href="{% url 'accounts:change-password' %}"> Change Password </a>
+        <a class="list-group-item {% if '/change_email/' in request.path %}active{% endif %}"
+            href="{% url 'accounts:change-email' %}"> Change Email </a>
     </ul>
     <br>
     <!--   SIDEBAR .//END   -->
