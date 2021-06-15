@@ -12,6 +12,7 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from apps.cart.models import Cart, CartItem
 from apps.cart.views import _cart_id
+from apps.orders.models import Order
 
 from .forms import RegistrationForm
 
@@ -133,7 +134,13 @@ def activate_email_view(request, uidb64, token):
 
 @login_required(login_url='accounts:login')
 def dashboard_view(request):
-    return render(request, 'accounts/dashboard.html')
+    orders = Order.objects.order_by('-created_at').filter(user_id=request.user.id, is_ordered=True)
+    orders_count = orders.count()
+
+    context = {
+        'orders_count': orders_count,
+    }
+    return render(request, 'accounts/dashboard.html', context)
 
 
 def forgot_password_view(request):
