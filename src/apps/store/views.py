@@ -40,10 +40,15 @@ def product_detail_view(request, category_slug=None, product_slug=None):
     else:
         order_product_exists = None
 
+    # Get the reviews
+    reviews = ReviewModel.objects.filter(product_id=product.id, status=True)
+
     context = {
         'product': product,
         'in_cart': in_cart,
-        'order_product_exists': order_product_exists
+        'order_product_exists': order_product_exists,
+        'reviews': reviews,
+        'stars': [0.5, 1.5, 2.5, 3.5, 4.5],
     }
     return render(request, 'store/product-detail.html', context)
 
