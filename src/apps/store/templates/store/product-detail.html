@@ -86,7 +86,7 @@
 
         <div class="row">
             <div class="col-md-9">
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated and order_product_exists %}
                     <form action="{% url 'store:submit-review' product.id %}" method="POST">
                         {% csrf_token %}
                         <h5>Write Your Review</h5>

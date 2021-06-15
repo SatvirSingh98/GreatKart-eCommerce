@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from apps.cart.models import CartItem
 from apps.cart.views import _cart_id
 from apps.category.models import Category
+from apps.orders.models import OrderProduct
 
 from .forms import ReviewModelForm
 from .models import Product, ReviewModel
@@ -30,7 +31,21 @@ def store_view(request, category_slug=None):
 def product_detail_view(request, category_slug=None, product_slug=None):
     product = get_object_or_404(Product, category__slug=category_slug, slug=product_slug)
     in_cart = CartItem.objects.filter(cart__cart_id=_cart_id(request), product=product).exists()
-    return render(request, 'store/product-detail.html', {'product': product, 'in_cart': in_cart})
+
+    if request.user.is_authenticated:
+        try:
+            order_product_exists = OrderProduct.objects.filter(user=request.user, product_id=product.id).exists()
+        except OrderProduct.DoesNotExist:
+            order_product_exists = None
+    else:
+        order_product_exists = None
+
+    context = {
+        'product': product,
+        'in_cart': in_cart,
+        'order_product_exists': order_product_exists
+    }
+    return render(request, 'store/product-detail.html', context)
 
 
 def search_view(request):
