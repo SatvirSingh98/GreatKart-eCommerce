@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Product, Variation
+from .models import Product, ReviewModel, Variation
 
 
 @admin.register(Product)
@@ -18,3 +18,10 @@ class VariationAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'variation_category', 'variation_value', 'timestamp', 'is_active')
     list_editable = ('is_active',)
     list_filter = ('product', 'variation_category', 'variation_value')
+
+
+@admin.register(ReviewModel)
+class ReviewModelAdmin(admin.ModelAdmin):
+    '''Admin View for Product'''
+
+    list_display = ('__str__', 'product', 'user', 'rating', 'status')

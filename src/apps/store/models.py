@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
@@ -5,6 +6,8 @@ from django.urls import reverse
 
 from apps.category.models import Category
 from core.utils import unique_slug_generator
+
+User = settings.AUTH_USER_MODEL
 
 
 class ProductManager(models.Manager):
@@ -65,3 +68,18 @@ class Variation(models.Model):
 
     def __str__(self):
         return f'{self.product.name} - ({self.variation_category}: {self.variation_value})'
+
+
+class ReviewModel(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    subject = models.CharField(blank=True, max_length=100)
+    review = models.TextField(blank=True, max_length=500)
+    rating = models.FloatField()
+    ip = models.CharField(blank=True, max_length=20)
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.subject
