@@ -73,7 +73,6 @@ class Variation(models.Model):
 class ReviewModel(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    subject = models.CharField(blank=True, max_length=100)
     review = models.TextField(blank=True, max_length=500)
     rating = models.FloatField()
     ip = models.CharField(blank=True, max_length=20)
@@ -82,4 +81,4 @@ class ReviewModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.subject
+        return self.user.username

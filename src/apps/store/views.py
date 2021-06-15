@@ -1,12 +1,15 @@
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 
 from apps.cart.models import CartItem
 from apps.cart.views import _cart_id
 from apps.category.models import Category
 
-from .models import Product
+from .forms import ReviewModelForm
+from .models import Product, ReviewModel
 
 
 def store_view(request, category_slug=None):
@@ -43,3 +46,27 @@ def search_view(request):
                'product_count': product_count,
                'query': query}
     return render(request, 'store/store.html', context)
+
+
+@login_required(login_url='accounts:login')
+def submit_review_view(request, product_id):
+    url = request.META.get('HTTP_REFERER')
+    if request.method == 'POST':
+        try:
+            reviews = ReviewModel.objects.get(user_id=request.user.id, product_id=product_id)
+            form = ReviewModelForm(request.POST, instance=reviews)
+            form.save()
+            messages.success(request, 'Thank you! Your review has been updated.')
+            return redirect(url)
+        except ReviewModel.DoesNotExist:
+            form = ReviewModelForm(request.POST)
+            if form.is_valid():
+                data = ReviewModel()
+                data.rating = form.cleaned_data.get('rating')
+                data.review = form.cleaned_data.get('review')
+                data.ip = request.META.get('REMOTE_ADDR')
+                data.product_id = product_id
+                data.user_id = request.user.id
+                data.save()
+            messages.success(request, 'Thank you! Your review has been submitted.')
+            return redirect(url)

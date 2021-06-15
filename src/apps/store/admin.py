@@ -24,4 +24,4 @@ class VariationAdmin(admin.ModelAdmin):
 class ReviewModelAdmin(admin.ModelAdmin):
     '''Admin View for Product'''
 
-    list_display = ('__str__', 'product', 'user', 'rating', 'status')
+    list_display = ('__str__', 'product', 'rating', 'status')
