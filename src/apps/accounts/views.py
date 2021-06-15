@@ -35,6 +35,12 @@ def register_view(request):
         user.phone_number = phone_number
         user.save()
 
+        # create user profile
+        profile = UserProfile()
+        profile.user_id = user.id
+        profile.profile_picture = 'default/avatar.png'
+        profile.save()
+
         current_site = get_current_site(request)
         mail_subject = 'Please activate your account...'
         message = render_to_string('accounts/verification_email.html', {
@@ -42,6 +48,7 @@ def register_view(request):
             'domain': current_site,
             'uid': urlsafe_base64_encode(force_bytes(user.pk)),
             'token': default_token_generator.make_token(user),
+            'secure': request.is_secure()
         })
         to_email = email
         send_email = EmailMessage(mail_subject, message, to=[to_email])
@@ -236,6 +243,8 @@ def edit_profile_view(request):
 def remove_profile_picture_view(request):
     userprofile = get_object_or_404(UserProfile, user=request.user)
     if userprofile.profile_picture is not None:
-        userprofile.profile_picture.delete()
+        userprofile.profile_picture.delete(save=False)
+        userprofile.profile_picture = 'default/avatar.png'
+        userprofile.save()
         messages.success(request, 'Profile picture successfully removed.')
     return redirect('accounts:edit-profile')

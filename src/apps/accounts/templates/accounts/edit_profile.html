@@ -17,7 +17,9 @@
                                 {% if userprofile.profile_picture %}
                                     <img src="{{ userprofile.profile_picture.url }}" alt="User Profile Picture"
                                         width="100" style="border-radius:50%;">
-                                    <a href="{% url 'accounts:remove-profile-picture' %}" class="ml-2">Remove</a>
+                                    {% if 'default' not in userprofile.profile_picture.url %}
+                                        <a href="{% url 'accounts:remove-profile-picture' %}" class="ml-2">Remove</a>
+                                    {% endif %}
                                 {% else %}
                                     <img src="https://www.w3schools.com/w3images/avatar2.png" alt="User Profile Picture"
                                         width="100" style="border-radius:50%;">
@@ -68,17 +70,21 @@
                                         {{ profile_form.address_line_2 }}
                                     </div>
                                     <div class="form-row">
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-3">
                                             <label>City</label>
                                             {{ profile_form.city }}
                                         </div>
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-3">
                                             <label>State</label>
                                             {{ profile_form.state }}
                                         </div>
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-3">
                                             <label>Country</label>
                                             {{ profile_form.country }}
+                                        </div>
+                                        <div class="form-group col-md-3">
+                                            <label>PinCode</label>
+                                            {{ profile_form.pin_code }}
                                         </div>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Save</button>
