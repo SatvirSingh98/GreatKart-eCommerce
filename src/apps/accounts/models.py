@@ -64,6 +64,7 @@ class UserProfile(models.Model):
     city = models.CharField(blank=True, max_length=20)
     state = models.CharField(blank=True, max_length=20)
     country = models.CharField(blank=True, max_length=20)
+    pin_code = models.CharField(blank=True, max_length=10)
 
     def __str__(self):
         return self.user.first_name

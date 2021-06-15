@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
@@ -14,7 +14,8 @@ from apps.cart.models import Cart, CartItem
 from apps.cart.views import _cart_id
 from apps.orders.models import Order
 
-from .forms import RegistrationForm
+from .forms import RegistrationForm, UserForm, UserProfileForm
+from .models import UserProfile
 
 User = get_user_model()
 
@@ -136,9 +137,10 @@ def activate_email_view(request, uidb64, token):
 def dashboard_view(request):
     orders = Order.objects.order_by('-created_at').filter(user_id=request.user.id, is_ordered=True)
     orders_count = orders.count()
-
+    userprofile = UserProfile.objects.get(user_id=request.user.id)
     context = {
         'orders_count': orders_count,
+        'userprofile': userprofile,
     }
     return render(request, 'accounts/dashboard.html', context)
 
@@ -204,3 +206,36 @@ def my_orders_view(request):
         'orders': orders,
     }
     return render(request, 'accounts/my_orders.html', context)
+
+
+@login_required(login_url='accounts:login')
+def edit_profile_view(request):
+    user = request.user
+    userprofile = get_object_or_404(UserProfile, user=user)
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=user)
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, 'Your profile has been updated.')
+            return redirect('accounts:edit-profile')
+    else:
+        user_form = UserForm(instance=user)
+        profile_form = UserProfileForm(instance=userprofile)
+    context = {
+        'user': user,
+        'user_form': user_form,
+        'profile_form': profile_form,
+        'userprofile': userprofile,
+    }
+    return render(request, 'accounts/edit_profile.html', context)
+
+
+@login_required(login_url='accounts:login')
+def remove_profile_picture_view(request):
+    userprofile = get_object_or_404(UserProfile, user=request.user)
+    if userprofile.profile_picture is not None:
+        userprofile.profile_picture.delete()
+        messages.success(request, 'Profile picture successfully removed.')
+    return redirect('accounts:edit-profile')
