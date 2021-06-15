@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.db.models.aggregates import Avg, Count
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.urls import reverse
@@ -35,6 +36,20 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse('store:product-detail',
                        kwargs={'product_slug': self.slug, 'category_slug': self.category.slug})
+
+    def average_rating(self):
+        reviews = ReviewModel.objects.filter(product=self, status=True).aggregate(average=Avg('rating'))
+        avg = 0
+        if reviews['average'] is not None:
+            avg = float(reviews['average'])
+        return avg
+
+    def count_reviews(self):
+        reviews = ReviewModel.objects.filter(product=self, status=True).aggregate(count=Count('id'))
+        count = 0
+        if reviews['count'] is not None:
+            count = float(reviews['count'])
+        return count
 
 
 @receiver(pre_save, sender=Product)
