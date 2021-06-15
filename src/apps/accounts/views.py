@@ -195,3 +195,12 @@ def reset_password_view(request):
         else:
             messages.error(request, 'Passwords does not match!')
     return render(request, 'accounts/reset_password.html')
+
+
+@login_required(login_url='login')
+def my_orders_view(request):
+    orders = Order.objects.filter(user=request.user, is_ordered=True).order_by('-created_at')
+    context = {
+        'orders': orders,
+    }
+    return render(request, 'accounts/my_orders.html', context)
