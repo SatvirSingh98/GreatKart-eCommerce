@@ -248,3 +248,28 @@ def remove_profile_picture_view(request):
         userprofile.save()
         messages.success(request, 'Profile picture successfully removed.')
     return redirect('accounts:edit-profile')
+
+
+@login_required(login_url='accounts:login')
+def change_password_view(request):
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        user = User.objects.get(username__exact=request.user.username)
+
+        if new_password == confirm_password:
+            success = user.check_password(current_password)
+            if success:
+                user.set_password(new_password)
+                user.save()
+                messages.success(request, 'Password updated successfully.')
+                return redirect('accounts:dashboard')
+            else:
+                messages.error(request, 'Please enter valid current password.')
+                return redirect('accounts:change-password')
+        else:
+            messages.error(request, 'Password does not match!')
+            return redirect('accounts:change-password')
+    return render(request, 'accounts/change_password.html')
