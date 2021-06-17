@@ -4,8 +4,8 @@ from django.db.models.aggregates import Avg, Count
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.urls import reverse
-from apps.accounts.models import UserProfile
 
+from apps.accounts.models import UserProfile
 from apps.category.models import Category
 from core.utils import unique_slug_generator
 
@@ -49,7 +49,7 @@ class Product(models.Model):
         reviews = ReviewModel.objects.filter(product=self, status=True).aggregate(count=Count('id'))
         count = 0
         if reviews['count'] is not None:
-            count = float(reviews['count'])
+            count = int(reviews['count'])
         return count
 
 

@@ -32,6 +32,19 @@
 						<figcaption class="info-wrap">
 							<a href="{{ product.get_absolute_url }}" class="title">{{ product.name }}</a>
 							<div class="price mt-1">₹{{ product.price }}</div>
+							<div class="rating-star">
+								<span>
+									{% for star in stars %}
+										<i aria-hidden="true"
+											class="fa fa-star{% if product.average_rating < star %}-o
+											{% elif product.average_rating >= star and product.average_rating < star|add:'0.5' %}-half-o{% endif %}">
+										</i>
+									{% endfor %}
+									<span class="text-primary" target="customer-reviews">
+										({{ product.count_reviews }} reviews)
+									</span>
+								</span>
+							</div>
 						</figcaption>
 					</div>
 				</div>
