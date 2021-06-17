@@ -8,6 +8,7 @@ django-admin-honeypot==1.1.0
 django-admin-thumbnails==0.2.5
 django-appconf==1.0.4
 django-compressor==2.4.1
+django-session-timeout==0.1.0
 flake8==3.9.2
 flake8-isort==4.0.0
 idna==2.10

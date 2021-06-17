@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container alert alert-info text-center" role="alert" style="max-width: 720px; margin-top:60px;">
+    <h2>
+        Your session expired due to inactivity.<br>
+        <a href="{% url 'accounts:login' %}">Login</a> again.
+    </h2>
+</div>
+{% endblock content %}
