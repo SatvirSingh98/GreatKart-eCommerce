@@ -97,3 +97,14 @@ class ReviewModel(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class ProductGallery(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, default=None)
+    image = models.ImageField(upload_to='store/products', max_length=255)
+
+    class Meta:
+        verbose_name_plural = 'Product gallery'
+
+    def __str__(self):
+        return self.product.name
