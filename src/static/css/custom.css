@@ -48,6 +48,8 @@ label:hover ~ input:checked ~ label {
     color: #ffb503 !important;
 }
 
+
+/* For product thumbnails */
 ul.thumb {
     margin: 0 auto;
     padding: 0;

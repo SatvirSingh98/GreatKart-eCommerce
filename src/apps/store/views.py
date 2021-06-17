@@ -10,7 +10,7 @@ from apps.category.models import Category
 from apps.orders.models import OrderProduct
 
 from .forms import ReviewModelForm
-from .models import Product, ReviewModel
+from .models import Product, ProductGallery, ReviewModel
 
 
 def store_view(request, category_slug=None):
@@ -43,12 +43,16 @@ def product_detail_view(request, category_slug=None, product_slug=None):
     # Get the reviews
     reviews = ReviewModel.objects.filter(product_id=product.id, status=True).order_by('-created_at')
 
+    # Get the product gallery
+    product_gallery = ProductGallery.objects.filter(product=product)
+
     context = {
         'product': product,
         'in_cart': in_cart,
         'order_product_exists': order_product_exists,
         'reviews': reviews,
         'stars': [0.5, 1.5, 2.5, 3.5, 4.5],
+        'product_gallery': product_gallery
     }
     return render(request, 'store/product-detail.html', context)
 
