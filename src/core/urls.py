@@ -1,3 +1,4 @@
+from decouple import config
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -11,7 +12,8 @@ urlpatterns = [
     path('cart/', include('apps.cart.urls')),
     path('accounts/', include('apps.accounts.urls')),
     path('orders/', include('apps.orders.urls')),
-    path('admin/', admin.site.urls),
+    path('admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
+    path(config('ADMIN_URL'), admin.site.urls),
 ]
 
 if settings.DEBUG:

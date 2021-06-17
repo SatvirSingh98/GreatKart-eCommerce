@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'apps.orders',
 
     'compressor',
+    'admin_honeypot',
 ]
 
 MIDDLEWARE = [
