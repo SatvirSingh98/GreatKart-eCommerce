@@ -30,8 +30,9 @@
                         <div class="rating-star">
                             <span>
                                 {% for star in stars %}
-                                    <i class="fa fa-star{% if product.average_rating < star %}-o{% elif product.average_rating >= star and product.average_rating < star|add:'0.5' %}-half-o{% endif %}"
-                                        aria-hidden="true"></i>
+                                    <i aria-hidden="true" class="fa fa-star{% if product.average_rating < star %}-o
+                                        {% elif product.average_rating >= star and product.average_rating < star|add:'0.5' %}-half-o{% endif %}">
+                                    </i>
                                 {% endfor %}
                                 <span target="customer-reviews">
                                     <a href="#customer-reviews" rel="noopener noreferrer">
@@ -144,7 +145,7 @@
                 {% for review in reviews %}
                     <article class="box mb-3">
                         <div class="icontext w-100">
-                            <img src="{% static 'images/avatars/avatar1.jpg' %}" class="img-xs icon rounded-circle">
+                            <img src="{{ review.userprofile.profile_picture.url }}" class="img-xs icon rounded-circle">
                             <div class="text">
                                 <span class="date text-muted float-md-right">
                                     {{ review.updated_at }}
@@ -153,8 +154,8 @@
                                 <div class="rating-star">
                                     <span>
                                         {% for star in stars %}
-                                            <i class="fa fa-star{% if review.rating == star %}-half-o{% elif review.rating < star %}-o{% endif %}"
-                                                aria-hidden="true"></i>
+                                            <i class="fa fa-star{% if review.rating == star %}-half-o
+                                                {% elif review.rating < star %}-o{% endif %}" aria-hidden="true"></i>
                                         {% endfor %}
                                     </span>
                                 </div>

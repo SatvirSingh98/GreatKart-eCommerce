@@ -4,6 +4,7 @@ from django.db.models.aggregates import Avg, Count
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.urls import reverse
+from apps.accounts.models import UserProfile
 
 from apps.category.models import Category
 from core.utils import unique_slug_generator
@@ -88,6 +89,7 @@ class Variation(models.Model):
 class ReviewModel(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    userprofile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     review = models.TextField(blank=True, max_length=500)
     rating = models.FloatField()
     ip = models.CharField(blank=True, max_length=20)

@@ -41,7 +41,7 @@ def product_detail_view(request, category_slug=None, product_slug=None):
         order_product_exists = None
 
     # Get the reviews
-    reviews = ReviewModel.objects.filter(product_id=product.id, status=True)
+    reviews = ReviewModel.objects.filter(product_id=product.id, status=True).order_by('-created_at')
 
     context = {
         'product': product,
