@@ -4,9 +4,9 @@ from django.views.generic import TemplateView
 from .views import (activate_email_view, change_email_view,
                     change_password_view, dashboard_view, edit_profile_view,
                     forgot_password_view, login_view, logout_view,
-                    my_orders_view, order_detail_view, register_view,
-                    remove_profile_picture_view, reset_password_validate_view,
-                    reset_password_view)
+                    my_orders_view, order_detail_view, print_to_pdf_view,
+                    register_view, remove_profile_picture_view,
+                    reset_password_validate_view, reset_password_view)
 
 app_name = 'accounts'
 
@@ -25,5 +25,6 @@ urlpatterns = [
     path('change_password/', change_password_view, name='change-password'),
     path('change_email/', change_email_view, name='change-email'),
     path('order_detail/<order_no>/', order_detail_view, name='order-detail'),
-    path('session_expired/', TemplateView.as_view(template_name='accounts/session_expired.html'))
+    path('session_expired/', TemplateView.as_view(template_name='accounts/session_expired.html')),
+    path('generate_pdf/<order_no>/', print_to_pdf_view, name='generate-pdf')
 ]

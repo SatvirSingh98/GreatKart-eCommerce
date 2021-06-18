@@ -13,6 +13,7 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from apps.cart.models import Cart, CartItem
 from apps.cart.views import _cart_id
 from apps.orders.models import Order, OrderProduct
+from core.utils import render_to_pdf
 
 from .forms import RegistrationForm, UserForm, UserProfileForm
 from .models import UserProfile
@@ -316,3 +317,19 @@ def order_detail_view(request, order_no):
         'subtotal': subtotal,
     }
     return render(request, 'accounts/order_detail.html', context)
+
+
+@login_required(login_url='accounts:login')
+def print_to_pdf_view(request, order_no):
+    order_detail = OrderProduct.objects.filter(order__order_no=order_no)
+    order = Order.objects.get(order_no=order_no)
+    subtotal = 0
+    for i in order_detail:
+        subtotal += i.product_price * i.quantity
+
+    context = {
+        'order_detail': order_detail,
+        'order': order,
+        'subtotal': subtotal,
+    }
+    return render_to_pdf(request, template_path='accounts/snippets/invoice.html', data=context, filename=order_no)

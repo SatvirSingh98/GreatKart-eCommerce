@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="container text-right" style="margin: 0 auto;width: 50%;padding: 5px;margin-top: 50px;">
-    <a href="#">
+    <a href="{% url 'accounts:generate-pdf' order.order_no %}" target="_new">
         <i class="fa fa-print fa-lg" aria-hidden="true"> Print</i>
     </a>
 </div>
@@ -62,20 +62,20 @@
                                         </thead>
                                         <tbody>
                                             {% for item in order_detail %}
-                                            <tr>
-                                                <td><em>{{ item.product.name }}</em>
-                                                    <p class="text-muted small">
-                                                        {% if item.variations.all %}
-                                                            {% for i in item.variations.all %}
-                                                                {{ i.variation_category|title }} :
-                                                                {{ i.variation_value|title }} <br>
-                                                            {% endfor %}
-                                                        {% endif %}
-                                                    </p>
-                                                </td>
-                                                <td class="text-center">{{ item.quantity }}</td>
-                                                <td class="text-center">₹ {{ item.product_price }} USD</td>
-                                            </tr>
+                                                <tr>
+                                                    <td><em>{{ item.product.name }}</em>
+                                                        <p class="text-muted small">
+                                                            {% if item.variations.all %}
+                                                                {% for i in item.variations.all %}
+                                                                    {{ i.variation_category|title }} :
+                                                                    {{ i.variation_value|title }} <br>
+                                                                {% endfor %}
+                                                            {% endif %}
+                                                        </p>
+                                                    </td>
+                                                    <td class="text-center">{{ item.quantity }}</td>
+                                                    <td class="text-center">₹ {{ item.product_price }}</td>
+                                                </tr>
                                             {% endfor %}
                                         </tbody>
                                         <tfoot>
